@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import DashboardLayout from '../components/DashboardLayout';
 
 const RegisterAdmin = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,8 @@ const RegisterAdmin = () => {
   });
 
   const [gyms, setGyms] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     axios.get('http://localhost:8080/gyms')
@@ -28,8 +31,10 @@ const RegisterAdmin = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setSuccess(false);
 
     const payload = {
       ...formData,
@@ -37,94 +42,207 @@ const RegisterAdmin = () => {
       gym_id: parseInt(formData.gym_id)
     };
 
-    axios.post('http://localhost:8080/register', payload)
-      .then(() => {
-        alert('Administrador registrado con éxito');
-        setFormData({
-          name: '',
-          lastname: '',
-          gender: '',
-          phone: '',
-          email: '',
-          movil_phone: '',
-          birth_date: '',
-          dni: '',
-          password: '',
-          gym_id: '',
-        });
-      })
-      .catch(err => {
-        console.error(err);
-        alert('Error al registrar usuario');
+    try {
+      await axios.post('http://localhost:8080/register', payload);
+      setSuccess(true);
+      setFormData({
+        name: '',
+        lastname: '',
+        gender: '',
+        phone: '',
+        email: '',
+        movil_phone: '',
+        birth_date: '',
+        dni: '',
+        password: '',
+        gym_id: '',
       });
+    } catch (err) {
+      console.error(err);
+      alert('Error al registrar usuario');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="container mt-4">
-      <h2>Registrar Administrador</h2>
-      <form onSubmit={handleSubmit} className="row g-3">
-
-        <div className="col-md-6">
-          <label className="form-label">Nombre</label>
-          <input type="text" name="name" className="form-control" value={formData.name} onChange={handleChange} required />
-        </div>
-
-        <div className="col-md-6">
-          <label className="form-label">Apellido</label>
-          <input type="text" name="lastname" className="form-control" value={formData.lastname} onChange={handleChange} required />
-        </div>
-
-        <div className="col-md-6">
-          <label className="form-label">Género</label>
-          <input type="text" name="gender" className="form-control" value={formData.gender} onChange={handleChange} />
-        </div>
-
-        <div className="col-md-6">
-          <label className="form-label">Teléfono</label>
-          <input type="text" name="phone" className="form-control" value={formData.phone} onChange={handleChange} />
-        </div>
-
-        <div className="col-md-6">
-          <label className="form-label">Móvil</label>
-          <input type="text" name="movil_phone" className="form-control" value={formData.movil_phone} onChange={handleChange} />
-        </div>
-
-        <div className="col-md-6">
-          <label className="form-label">DNI</label>
-          <input type="text" name="dni" className="form-control" value={formData.dni} onChange={handleChange} required />
-        </div>
-
-        <div className="col-md-6">
-          <label className="form-label">Email</label>
-          <input type="email" name="email" className="form-control" value={formData.email} onChange={handleChange} />
-        </div>
-
-        <div className="col-md-6">
-          <label className="form-label">Contraseña</label>
-          <input type="password" name="password" className="form-control" value={formData.password} onChange={handleChange} />
-        </div>
-
-        <div className="col-md-6">
-          <label className="form-label">Fecha de Nacimiento</label>
-          <input type="date" name="birth_date" className="form-control" value={formData.birth_date} onChange={handleChange} />
-        </div>
-
-        <div className="col-md-6">
-          <label className="form-label">Gimnasio</label>
-          <select name="gym_id" className="form-select" value={formData.gym_id} onChange={handleChange} required>
-            <option value="">Seleccionar gimnasio</option>
-            {gyms.map((gym: any) => (
-              <option key={gym.id} value={gym.id}>{gym.name}</option>
-            ))}
-          </select>
-        </div>
-
+    <DashboardLayout>
+      <div className="row g-4">
+        {/* Header */}
         <div className="col-12">
-          <button type="submit" className="btn btn-primary">Registrar</button>
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <h1 className="card-title h3 fw-bold text-dark">Registrar Administrador</h1>
+              <p className="card-text text-muted">Crea una nueva cuenta de administrador</p>
+            </div>
+          </div>
         </div>
 
-      </form>
-    </div>
+        {/* Success Message */}
+        {success && (
+          <div className="col-12">
+            <div className="alert alert-success" role="alert">
+              <i className="bi bi-check-circle-fill me-2"></i>
+              ✅ Administrador registrado con éxito
+            </div>
+          </div>
+        )}
+
+        {/* Form */}
+        <div className="col-12">
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <form onSubmit={handleSubmit}>
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <label className="form-label fw-medium">Nombre</label>
+                    <input 
+                      type="text" 
+                      name="name" 
+                      className="form-control" 
+                      value={formData.name} 
+                      onChange={handleChange} 
+                      required 
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="form-label fw-medium">Apellido</label>
+                    <input 
+                      type="text" 
+                      name="lastname" 
+                      className="form-control" 
+                      value={formData.lastname} 
+                      onChange={handleChange} 
+                      required 
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="form-label fw-medium">Género</label>
+                    <select 
+                      name="gender" 
+                      className="form-select"
+                      value={formData.gender} 
+                      onChange={handleChange}
+                    >
+                      <option value="">Seleccionar género</option>
+                      <option value="Masculino">Masculino</option>
+                      <option value="Femenino">Femenino</option>
+                      <option value="Otro">Otro</option>
+                    </select>
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="form-label fw-medium">Teléfono</label>
+                    <input 
+                      type="text" 
+                      name="phone" 
+                      className="form-control" 
+                      value={formData.phone} 
+                      onChange={handleChange} 
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="form-label fw-medium">Móvil</label>
+                    <input 
+                      type="text" 
+                      name="movil_phone" 
+                      className="form-control" 
+                      value={formData.movil_phone} 
+                      onChange={handleChange} 
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="form-label fw-medium">DNI</label>
+                    <input 
+                      type="text" 
+                      name="dni" 
+                      className="form-control" 
+                      value={formData.dni} 
+                      onChange={handleChange} 
+                      required 
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="form-label fw-medium">Email</label>
+                    <input 
+                      type="email" 
+                      name="email" 
+                      className="form-control" 
+                      value={formData.email} 
+                      onChange={handleChange} 
+                      required
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="form-label fw-medium">Contraseña</label>
+                    <input 
+                      type="password" 
+                      name="password" 
+                      className="form-control" 
+                      value={formData.password} 
+                      onChange={handleChange} 
+                      required
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="form-label fw-medium">Fecha de Nacimiento</label>
+                    <input 
+                      type="date" 
+                      name="birth_date" 
+                      className="form-control" 
+                      value={formData.birth_date} 
+                      onChange={handleChange} 
+                    />
+                  </div>
+
+                  <div className="col-12">
+                    <label className="form-label fw-medium">Gimnasio</label>
+                    <select 
+                      name="gym_id" 
+                      className="form-select" 
+                      value={formData.gym_id} 
+                      onChange={handleChange} 
+                      required
+                    >
+                      <option value="">Seleccionar gimnasio</option>
+                      {gyms.map((gym: any) => (
+                        <option key={gym.id} value={gym.id}>{gym.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="col-12">
+                    <div className="d-flex justify-content-end">
+                      <button 
+                        type="submit" 
+                        disabled={loading}
+                        className="btn btn-primary px-4 py-2"
+                      >
+                        {loading ? (
+                          <>
+                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Registrando...
+                          </>
+                        ) : (
+                          'Registrar Administrador'
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </DashboardLayout>
   );
 };
 

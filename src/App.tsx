@@ -2,12 +2,15 @@ import React from 'react';
 //import logo from './logo.svg';
 import './App.css';
 import AppRoutes from './routes';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <AppRoutes />
-    </div>
+    <AuthProvider>
+      <div className="min-vh-100 bg-light">
+        <AppRoutes />
+      </div>
+    </AuthProvider>
   );
 }
 
