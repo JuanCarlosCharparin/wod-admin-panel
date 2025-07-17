@@ -7,6 +7,7 @@ import RegisterAdmin from '../pages/RegisterAdmin';
 import Login from '../pages/Login';
 import Dashboard from '../pages/Dashboard';
 import UserDetail from '../pages/UserDetail';
+import UserNewPack from '../pages/UserNewPack';
 //import Classes from '../pages/Classes';
 
 
@@ -40,6 +41,11 @@ const AppRoutes = () => (
       <Route path="/users-detail/:id" element={
         <ProtectedRoute>
           <UserDetail />
+        </ProtectedRoute>
+      } />
+      <Route path="/users-newpack/:id" element={
+        <ProtectedRoute>
+          <UserNewPack />
         </ProtectedRoute>
       } />
     </Routes>

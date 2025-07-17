@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
 import DashboardLayout from '../components/DashboardLayout';
 
 const UserDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [user, setUser] = useState<{ name: string; lastname: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -67,7 +68,7 @@ const UserDetail = () => {
             type="button"
             className="card bg-success text-white shadow-sm h-100 w-100 border-0"
             style={{ cursor: 'pointer' }}
-            // onClick={() => { /* Acción para nuevo paquete */ }}
+            onClick={() => navigate(`/users-newpack/${id}`)}
           >
             <div className="card-body d-flex align-items-center justify-content-between">
               <div>
