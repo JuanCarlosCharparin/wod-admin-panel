@@ -42,7 +42,7 @@ const UserNewPack = () => {
       //console.log('Datos del paquete a enviar:', packageData);
       
       // Enviar datos al backend
-      const response = await axiosInstance.post('http://192.168.100.18:8080/user_packs', packageData);
+      const response = await axiosInstance.post('http://localhost:8080/user_packs', packageData);
       console.log('Respuesta del backend:', response.data);
       
       // Redirigir de vuelta al detalle del usuario
@@ -65,7 +65,7 @@ const UserNewPack = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axiosInstance.get(`http://192.168.100.18:8080/users/${id}`);
+        const res = await axiosInstance.get(`http://localhost:8080/users/${id}`);
         //console.log(res.data);
         setUser(res.data);
         // Actualizar formData con los datos del usuario
@@ -83,7 +83,7 @@ const UserNewPack = () => {
 
     const fetchDisciplines = async () => {
       try {
-        const res = await axiosInstance.get('http://192.168.100.18:8080/disciplines');
+        const res = await axiosInstance.get('http://localhost:8080/disciplines');
         //console.log('Disciplinas:', res.data);
         setDisciplines(res.data);
       } catch (err) {
@@ -95,7 +95,7 @@ const UserNewPack = () => {
 
     const fetchPacks = async () => {
       try {
-        const res = await axiosInstance.get('http://192.168.100.18:8080/packs');
+        const res = await axiosInstance.get('http://localhost:8080/packs');
         //console.log('Packs:', res.data);
         setPacks(res.data);
       } catch (err) {
