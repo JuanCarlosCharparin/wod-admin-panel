@@ -8,7 +8,7 @@ import Login from '../pages/Login';
 import Dashboard from '../pages/Dashboard';
 import UserDetail from '../pages/UserDetail';
 import UserNewPack from '../pages/UserNewPack';
-//import Classes from '../pages/Classes';
+import Classes from '../pages/Classes';
 
 
 const AppRoutes = () => (
@@ -46,6 +46,11 @@ const AppRoutes = () => (
       <Route path="/users-newpack/:id" element={
         <ProtectedRoute>
           <UserNewPack />
+        </ProtectedRoute>
+      } />
+      <Route path="/classes" element={
+        <ProtectedRoute>
+          <Classes />
         </ProtectedRoute>
       } />
     </Routes>

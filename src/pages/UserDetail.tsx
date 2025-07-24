@@ -4,10 +4,13 @@ import axiosInstance from '../api/axiosInstance';
 import DashboardLayout from '../components/DashboardLayout';
 
 type UserPackHistory = {
-  id: number;
+  user_pack_id: number;
   start_date: string;
   expiration_date: string;
   status: number;
+  class_quantity: number;
+  used: number;
+  remaining: number;
   pack: {
     id: number;
     pack_name: string;
@@ -46,7 +49,8 @@ const UserDetail = () => {
   useEffect(() => {
     const fetchUserPacksHistory = async () => {
       try {
-        const res = await axiosInstance.get(`http://localhost:8080/user_packs/user/${id}`);
+        const res = await axiosInstance.get(`http://localhost:8080/calendar/users/used-all-classes/${id}`);
+        //console.log(res.data);
         setUserPacksHistory(res.data);
       } catch (err) {
         console.error('Error al cargar el historial de packs:', err);
@@ -128,12 +132,12 @@ const UserDetail = () => {
                 <th>Vencimiento</th>
                 <th>Estado</th>
                 <th>Clases</th>
-                <th>Precio</th>
+                <th>Turnos</th>
               </tr>
             </thead>
             <tbody>
               {userPacksHistory.slice(0, 5).map((item) => (
-                <tr key={item.id}>
+                <tr key={item.user_pack_id}>
                   <td>{item.pack.pack_name}</td>
                   <td>{item.discipline.name}</td>
                   <td>{new Date(item.start_date).toLocaleDateString()}</td>
@@ -143,8 +147,8 @@ const UserDetail = () => {
                       {item.status === 1 ? 'Activo' : 'Vencido'}
                     </span>
                   </td>
-                  <td>{item.pack.class_quantity}</td>
-                  <td>${item.pack.price.toLocaleString()}</td>
+                  <td>{item.class_quantity}</td>
+                  <td>{item.used} de {item.class_quantity} disponibles</td>
                 </tr>
               ))}
             </tbody>

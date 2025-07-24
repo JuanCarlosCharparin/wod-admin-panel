@@ -114,6 +114,15 @@ const Dashboard = () => {
                     <span className="fw-medium">Estadísticas</span>
                   </button>
                 </div>
+                <div className="col-12 col-md-4">
+                  <button
+                    onClick={() => navigate('/classes')}
+                    className="btn btn-outline-warning w-100 d-flex align-items-center justify-content-center py-3"
+                  >
+                    <span className="fs-4 me-3">🏋️</span>
+                    <span className="fw-medium">Carga masiva de clases</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
