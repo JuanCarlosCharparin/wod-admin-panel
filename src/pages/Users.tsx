@@ -22,6 +22,13 @@ type User = {
     id: number;
     name: string;
   };
+  status: boolean;
+  user_packs: {
+    id: number;
+    start_date: string;
+    expiration_date: string;
+    status: number;
+  }[];
 };
 
 const Users = () => {
@@ -166,6 +173,8 @@ const Users = () => {
                       <th scope="col" className="px-3 py-3">Email</th>
                       <th scope="col" className="px-3 py-3">Teléfono</th>
                       <th scope="col" className="px-3 py-3">DNI</th>
+                      <th scope="col" className="px-3 py-3">Fecha Vencimiento Pack</th>
+                      <th scope="col" className="px-3 py-3">Estado</th>
                       <th scope="col" className="px-3 py-3 text-center">Acciones</th>
                     </tr>
                   </thead>
@@ -179,6 +188,14 @@ const Users = () => {
                         </td>
                         <td className="px-3 py-3">{user.phone || '-'}</td>
                         <td className="px-3 py-3">{user.dni}</td>
+                        <td className="px-3 py-3">
+                          {user.user_packs && user.user_packs.length > 0 ? (
+                            new Date(user.user_packs[0].expiration_date).toLocaleDateString()
+                          ) : (
+                            '-'
+                          )}
+                        </td>
+                        <td className="px-3 py-3">{user.status ? 'Activo' : 'Suspendido'}</td>
                         <td className="px-3 py-3">
                           <div className="d-flex justify-content-center gap-2">
                             <button

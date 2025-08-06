@@ -16,7 +16,7 @@ const UserNewPack = () => {
     gym_id: 0,
     user_id: 0,
     pack_id: '',
-    discipline_id: ''
+    discipline_ids: [] as number[]
   });
   const [loading, setLoading] = useState(false);
   const [userLoading, setUserLoading] = useState(true);
@@ -28,22 +28,38 @@ const UserNewPack = () => {
     setLoading(true);
     
     try {
-      // Preparar los datos para enviar al backend
+      // Preparar los datos para enviar al backend (sin discipline_id)
       const packageData = {
         start_date: new Date(formData.start_date).toISOString(),
         expiration_date: new Date(formData.expiration_date).toISOString(),
         status: formData.status,
         gym_id: formData.gym_id,
         user_id: formData.user_id,
-        pack_id: parseInt(formData.pack_id),
-        discipline_id: parseInt(formData.discipline_id)
+        pack_id: parseInt(formData.pack_id)
       };
       
-      //console.log('Datos del paquete a enviar:', packageData);
+      console.log('Datos del paquete a enviar:', packageData);
       
-      // Enviar datos al backend
+      // Enviar datos al backend para crear el user_pack
       const response = await axiosInstance.post('http://localhost:8080/user_packs', packageData);
-      console.log('Respuesta del backend:', response.data);
+      //console.log('Respuesta del backend (user_pack):', response.data);
+      
+      // Obtener el ID del user_pack creado
+      const userPackId = response.data.id || response.data.user_pack_id;
+      
+      // Si hay disciplinas seleccionadas, enviar al segundo endpoint
+      if (formData.discipline_ids.length > 0) {
+        const disciplinesData = {
+          user_pack_id: userPackId,
+          discipline_ids: formData.discipline_ids
+        };
+        
+        //console.log('Datos de disciplinas a enviar:', disciplinesData);
+        
+        // Enviar las disciplinas al segundo endpoint
+        await axiosInstance.post('http://localhost:8080/user_packs_disciplines', disciplinesData);
+        //console.log('Respuesta del backend (disciplines):', disciplinesResponse.data);
+      }
       
       // Redirigir de vuelta al detalle del usuario
       navigate(`/users-detail/${id}`);
@@ -59,6 +75,15 @@ const UserNewPack = () => {
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleDisciplineChange = (disciplineId: number, isChecked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      discipline_ids: isChecked 
+        ? [...prev.discipline_ids, disciplineId]
+        : prev.discipline_ids.filter(id => id !== disciplineId)
     }));
   };
 
@@ -209,37 +234,47 @@ const UserNewPack = () => {
                     )}
                   </div>
 
-                  {/* Disciplina */}
+                  {/* Disciplinas */}
                   <div className="col-md-6">
-                    <label htmlFor="discipline_id" className="form-label fw-bold">
-                      <i className="bi bi-trophy me-2"></i>
-                      Disciplina
-                    </label>
-                    <select
-                      className="form-select"
-                      id="discipline_id"
-                      name="discipline_id"
-                      value={formData.discipline_id}
-                      onChange={handleInputChange}
-                      required
-                      disabled={disciplinesLoading}
-                    >
-                      <option value="">Selecciona una disciplina</option>
-                      {disciplines.map((discipline) => (
-                        <option key={discipline.id} value={discipline.id}>
-                          {discipline.name}
-                        </option>
-                      ))}
-                    </select>
-                    {disciplinesLoading && (
-                      <div className="form-text">
-                        <small className="text-muted">
-                          <i className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></i>
-                          Cargando disciplinas...
-                        </small>
-                      </div>
-                    )}
-                  </div>
+                     <label className="form-label fw-bold">
+                       <i className="bi bi-trophy me-2"></i>
+                       Disciplinas
+                     </label>
+                     <div className="border rounded p-3" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                       {disciplinesLoading ? (
+                         <div className="text-center">
+                           <div className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></div>
+                           <small className="text-muted">Cargando disciplinas...</small>
+                         </div>
+                       ) : (
+                         <div className="row g-2">
+                           {disciplines.map((discipline) => (
+                             <div key={discipline.id} className="col-12">
+                               <div className="form-check">
+                                 <input
+                                   className="form-check-input"
+                                   type="checkbox"
+                                   id={`discipline-${discipline.id}`}
+                                   checked={formData.discipline_ids.includes(discipline.id)}
+                                   onChange={(e) => handleDisciplineChange(discipline.id, e.target.checked)}
+                                   disabled={disciplinesLoading}
+                                 />
+                                 <label className="form-check-label" htmlFor={`discipline-${discipline.id}`}>
+                                   {discipline.name}
+                                 </label>
+                               </div>
+                             </div>
+                           ))}
+                         </div>
+                       )}
+                     </div>
+                     <div className="form-text">
+                       <small className="text-muted">
+                         <i className="bi bi-info-circle me-1"></i>
+                         Marca las disciplinas que deseas asignar al paquete
+                       </small>
+                     </div>
+                   </div>
 
 
                 </div>

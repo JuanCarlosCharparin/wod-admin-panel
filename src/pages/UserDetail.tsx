@@ -17,7 +17,11 @@ type UserPackHistory = {
     price: number;
     class_quantity: number;
   };
-  discipline: {
+  disciplines: {
+    id: number;
+    name: string;
+  }[];
+  gym: {
     id: number;
     name: string;
   };
@@ -26,11 +30,12 @@ type UserPackHistory = {
 const UserDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [user, setUser] = useState<{ name: string; lastname: string } | null>(null);
+  const [user, setUser] = useState<{ name: string; lastname: string; status: boolean } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [userPacksHistory, setUserPacksHistory] = useState<UserPackHistory[]>([]);
   const [historyLoading, setHistoryLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -60,6 +65,34 @@ const UserDetail = () => {
     };
     fetchUserPacksHistory();
   }, [id]);
+
+  const handleStatusChange = async () => {
+    if (!user) return;
+    
+    const action = user.status ? 'suspender' : 'activar';
+    const userName = `${user.name} ${user.lastname}`;
+    
+    const confirmed = window.confirm(`¿Estás seguro que quieres ${action} al usuario ${userName}?`);
+    
+    if (!confirmed) return;
+    
+    setActionLoading(true);
+    try {
+      const endpoint = user.status 
+        ? `http://localhost:8080/users/${id}/disable`
+        : `http://localhost:8080/users/${id}/enable`;
+      
+      await axiosInstance.put(endpoint);
+      
+      // Actualizar el estado del usuario localmente
+      setUser(prev => prev ? { ...prev, status: !prev.status } : null);
+    } catch (err) {
+      console.error('Error al cambiar el estado del usuario:', err);
+      alert('Error al cambiar el estado del usuario');
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -96,6 +129,11 @@ const UserDetail = () => {
               <h1 className="card-title h3 fw-bold text-dark mb-1">
                 {user?.name} {user?.lastname}
               </h1>
+              <div className="mt-2">
+                <span className={`badge ${user?.status ? 'bg-success' : 'bg-danger'}`}>
+                  {user?.status ? 'Activo' : 'Inactivo'}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -116,6 +154,28 @@ const UserDetail = () => {
             </div>
           </button>
         </div>
+        {/* Tarjeta Suspender/Activar Usuario */}
+        <div className="col-12 col-md-6 col-lg-4">
+          <button
+            type="button"
+            className={`card shadow-sm h-100 w-100 border-0 ${user?.status ? 'bg-danger' : 'bg-success'} text-white`}
+            style={{ cursor: 'pointer' }}
+            onClick={handleStatusChange}
+            disabled={actionLoading}
+          >
+            <div className="card-body d-flex align-items-center justify-content-between">
+              <div>
+                <h5 className="card-title fw-bold mb-1">
+                  {user?.status ? 'Suspender Usuario' : 'Activar Usuario'}
+                </h5>
+                <p className="card-text small opacity-75">
+                  {user?.status ? 'Cambiar estado a inactivo' : 'Cambiar estado a activo'}
+                </p>
+              </div>
+              <span className="fs-1">{user?.status ? '🚫' : '✅'}</span>
+            </div>
+          </button>
+        </div>
         <hr className="my-4" />
         <h2 className="h5 fw-bold mb-3">Historial de Packs Contratados</h2>
         {historyLoading ? (
@@ -127,7 +187,7 @@ const UserDetail = () => {
             <thead>
               <tr>
                 <th>Pack</th>
-                <th>Disciplina</th>
+                <th>Disciplinas</th>
                 <th>Inicio</th>
                 <th>Vencimiento</th>
                 <th>Estado</th>
@@ -139,7 +199,7 @@ const UserDetail = () => {
               {userPacksHistory.slice(0, 5).map((item) => (
                 <tr key={item.user_pack_id}>
                   <td>{item.pack.pack_name}</td>
-                  <td>{item.discipline.name}</td>
+                  <td>{item.disciplines.map((discipline: { name: string }) => discipline.name).join(', ')}</td>
                   <td>{new Date(item.start_date).toLocaleDateString()}</td>
                   <td>{new Date(item.expiration_date).toLocaleDateString()}</td>
                   <td>
