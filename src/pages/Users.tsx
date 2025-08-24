@@ -168,11 +168,10 @@ const Users = () => {
                 <table className="table table-hover mb-0">
                   <thead className="table-light">
                     <tr>
+                      <th scope="col" className="px-3 py-3">Id</th>
                       <th scope="col" className="px-3 py-3">Nombre</th>
                       <th scope="col" className="px-3 py-3">Apellido</th>
                       <th scope="col" className="px-3 py-3">Email</th>
-                      <th scope="col" className="px-3 py-3">Teléfono</th>
-                      <th scope="col" className="px-3 py-3">DNI</th>
                       <th scope="col" className="px-3 py-3">Fecha Vencimiento Pack</th>
                       <th scope="col" className="px-3 py-3">Estado</th>
                       <th scope="col" className="px-3 py-3 text-center">Acciones</th>
@@ -181,13 +180,12 @@ const Users = () => {
                   <tbody>
                     {users.map(user => (
                       <tr key={user.id}>
+                        <td className="px-3 py-3 fw-medium">{user.id}</td>
                         <td className="px-3 py-3 fw-medium">{user.name}</td>
                         <td className="px-3 py-3">{user.lastname}</td>
                         <td className="px-3 py-3">
                           <span className="text-primary">{user.email}</span>
                         </td>
-                        <td className="px-3 py-3">{user.phone || '-'}</td>
-                        <td className="px-3 py-3">{user.dni}</td>
                         <td className="px-3 py-3">
                           {user.user_packs && user.user_packs.length > 0 ? (
                             new Date(user.user_packs[0].expiration_date).toLocaleDateString()

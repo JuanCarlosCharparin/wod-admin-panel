@@ -20,9 +20,24 @@ export type Class = {
   id: number;
   date: string;
   time: string;
+  day_of_week: string;
   capacity: number;
-  gym_id: number;
-  discipline_id: number;
+  enrolled: number;
+  vacancy: number;
+  gym: {
+    id: number;
+    name: string;
+  };
+  discipline: {
+    id: number;
+    name: string;
+  };
+};
+
+export type ClassesResponse = {
+  classes: Class[];
+  week_start: string;
+  week_end: string;
 };
 
 export type Discipline = {

@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -6,7 +5,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -18,8 +16,8 @@ const Navbar = () => {
   };
 
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: '🏠' },
-    { path: '/users', label: 'Usuarios', icon: '👥' },
+    { path: '/dashboard', label: 'Home', icon: '🏠' },
+    { path: '/users', label: 'Socios', icon: '👥' },
     { path: '/classes', label: 'Clases', icon: '🏋️' },
   ];
 
@@ -28,12 +26,9 @@ const Navbar = () => {
     if (!user) return 'Administrador';
     
     const firstName = user.name || '';
-    const lastName = user.lastname || '';
     
-    if (firstName && lastName) {
-      return `${firstName} ${lastName}`;
-    } else if (firstName) {
-      return firstName;
+    if (firstName) {
+      return `${firstName}`;
     } else {
       return 'Usuario';
     }
@@ -46,8 +41,7 @@ const Navbar = () => {
         <div className="d-flex flex-column h-100">
           {/* Logo */}
           <div className="p-4 border-bottom border-secondary">
-            <h4 className="fw-bold text-dark mb-0">Hook Fitness</h4>
-            <small className="text-muted">Panel de Administración</small>
+            <h4 className="fw-bold text-dark mb-0">{user?.gym?.name}</h4>
           </div>
 
           {/* User Info */}
@@ -58,7 +52,6 @@ const Navbar = () => {
               </div>
               <div>
                 <div className="fw-medium text-dark">{getUserFullName()}</div>
-                <div className="text-muted small">{user?.role?.name || 'Administrador'}</div>
               </div>
             </div>
           </div>
@@ -97,47 +90,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Navbar */}
-      <nav className="d-lg-none navbar navbar-expand-lg navbar-light" style={{ backgroundColor: '#e3f2fd' }}>
-        <div className="container-fluid">
-          <span className="navbar-brand fw-bold text-dark">🏋️ Hook Fitness</span>
-          
-          <button
-            className="navbar-toggler"
-            type="button"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
 
-          <div className={`collapse navbar-collapse ${isMenuOpen ? 'show' : ''}`}> 
-            <ul className="navbar-nav me-auto">
-              {navItems.map((item) => (
-                <li className="nav-item" key={item.path}>
-                  <button
-                    onClick={() => {
-                      navigate(item.path);
-                      setIsMenuOpen(false);
-                    }}
-                    className={`nav-link ${isActive(item.path) ? 'active' : ''} text-dark`}
-                  >
-                    <span className="me-2">{item.icon}</span>
-                    {item.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-            
-            <div className="d-flex align-items-center">
-              <span className="text-dark me-3 small">{getUserFullName()}</span>
-              <button onClick={handleLogout} className="btn btn-outline-dark btn-sm">
-                <i className="bi bi-box-arrow-right me-1"></i>
-                Salir
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
     </>
   );
 };

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
 import DashboardLayout from '../components/DashboardLayout';
+import { useAuth } from '../context/AuthContext';
 
 const UserNewPack = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,6 +23,7 @@ const UserNewPack = () => {
   const [userLoading, setUserLoading] = useState(true);
   const [disciplinesLoading, setDisciplinesLoading] = useState(true);
   const [packsLoading, setPacksLoading] = useState(true);
+  const { user: authUser } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,8 +109,11 @@ const UserNewPack = () => {
     };
 
     const fetchDisciplines = async () => {
+      if (!authUser || !authUser.gym) return; 
+
+      const gymId = authUser.gym.id;
       try {
-        const res = await axiosInstance.get('http://localhost:8080/disciplines');
+        const res = await axiosInstance.get(`http://localhost:8080/disciplines/gym/${gymId}`);
         //console.log('Disciplinas:', res.data);
         setDisciplines(res.data);
       } catch (err) {
@@ -119,8 +124,11 @@ const UserNewPack = () => {
     };
 
     const fetchPacks = async () => {
+      if (!authUser || !authUser.gym) return; 
+
+      const gymId = authUser.gym.id;
       try {
-        const res = await axiosInstance.get('http://localhost:8080/packs');
+        const res = await axiosInstance.get(`http://localhost:8080/packs/gym/${gymId}`);
         //console.log('Packs:', res.data);
         setPacks(res.data);
       } catch (err) {
@@ -133,7 +141,7 @@ const UserNewPack = () => {
     fetchUser();
     fetchDisciplines();
     fetchPacks();
-  }, [id]);
+  }, [id, authUser]);
 
   return (
     <DashboardLayout>

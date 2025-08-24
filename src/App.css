@@ -36,3 +36,23 @@
     transform: rotate(360deg);
   }
 }
+
+/* Estilos para las clases clickeables en Agenda */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover-effect {
+  transition: all 0.2s ease-in-out;
+}
+
+.hover-effect:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #f8f9fa !important;
+  border-color: #007bff !important;
+}
+
+.hover-effect:hover strong {
+  color: #007bff;
+}

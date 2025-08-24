@@ -1,5 +1,4 @@
 // src/pages/Dashboard.tsx
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
 import { useAuth } from '../context/AuthContext';
@@ -16,7 +15,7 @@ const Dashboard = () => {
 
   const dashboardCards = [
     {
-      title: 'Usuarios',
+      title: 'Socios',
       description: 'Gestionar usuarios del sistema',
       icon: '👥',
       path: '/users',
@@ -52,7 +51,7 @@ const Dashboard = () => {
                 ¡Bienvenido, {getGreetingName()}!
               </h1>
               <p className="card-text text-muted">
-                Panel de administración de Hook Fitness - {user?.role?.name || 'Usuario'}
+                Panel de administración de {user?.gym?.name || 'Gimnasio'} - {user?.role?.name || 'Usuario'}
               </p>
             </div>
           </div>

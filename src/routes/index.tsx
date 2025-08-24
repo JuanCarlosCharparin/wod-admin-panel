@@ -9,6 +9,8 @@ import Dashboard from '../pages/Dashboard';
 import UserDetail from '../pages/UserDetail';
 import UserNewPack from '../pages/UserNewPack';
 import Classes from '../pages/Classes';
+import Agenda from '../pages/Agenda';
+import ClassDetail from '../pages/ClassDetail';
 
 
 const AppRoutes = () => (
@@ -51,6 +53,16 @@ const AppRoutes = () => (
       <Route path="/classes" element={
         <ProtectedRoute>
           <Classes />
+        </ProtectedRoute>
+      } />
+      <Route path="/agenda" element={
+        <ProtectedRoute>
+          <Agenda />
+        </ProtectedRoute>
+      } />
+      <Route path="/class-detail/:id" element={
+        <ProtectedRoute>
+          <ClassDetail />
         </ProtectedRoute>
       } />
     </Routes>
