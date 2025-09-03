@@ -31,12 +31,12 @@ const Dashboard = () => {
       textColor: 'text-white'
     },
     {
-      title: 'Clases',
-      description: 'Administrar clases y actividades',
+      title: 'Carga masiva de clases',
+      description: 'Sube varias clases de manera rápida y sencilla',
       icon: '🏋️',
-      path: '/classes',
-      color: 'bg-warning',
-      textColor: 'text-dark'
+      path: '/clases',
+      color: 'bg-secondary',
+      textColor: 'text-white'
     }
   ];
 

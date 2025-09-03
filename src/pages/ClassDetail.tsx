@@ -34,6 +34,7 @@ interface Inscripto {
   };
   status: string;
   reserved: string;
+  canceled?: string;
 }
 
 const ClassDetail = () => {
@@ -104,7 +105,7 @@ const ClassDetail = () => {
     }
   };
 
-  const formatearFechaReserva = (fechaReserva: string): string => {
+  const formatearFechaReserva = (fechaReserva: string, esCancelacion: boolean = false): string => {
     try {
       const date = new Date(fechaReserva);
       const dia = date.getDate().toString().padStart(2, '0');
@@ -112,7 +113,8 @@ const ClassDetail = () => {
       const hora = date.getHours().toString().padStart(2, '0');
       const minutos = date.getMinutes().toString().padStart(2, '0');
       
-      return `reservado el ${dia}/${mes} a las ${hora}:${minutos}`;
+      const accion = esCancelacion ? 'cancelado' : 'reservado';
+      return `${accion} el ${dia}/${mes} a las ${hora}:${minutos}`;
     } catch (error) {
       return 'fecha no disponible';
     }
@@ -265,7 +267,10 @@ const ClassDetail = () => {
                                 
                               </div>
                               <small className="text-muted">
-                                {inscripto.reserved ? formatearFechaReserva(inscripto.reserved) : ''}
+                                {inscripto.status === 'inscripto' 
+                                  ? (inscripto.reserved ? formatearFechaReserva(inscripto.reserved, false) : '')
+                                  : (inscripto.canceled ? formatearFechaReserva(inscripto.canceled, true) : '')
+                                }
                               </small>
                             </div>
                           </div>
