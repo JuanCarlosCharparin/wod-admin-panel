@@ -8,7 +8,9 @@ import Login from '../pages/Login';
 import Dashboard from '../pages/Dashboard';
 import UserDetail from '../pages/UserDetail';
 import UserNewPack from '../pages/UserNewPack';
-import Classes from '../pages/Classes';
+import Agenda from '../pages/Agenda';
+import ClassDetail from '../pages/ClassDetail';
+import CargaMasivaClases from '../pages/CargaMasivaClases';
 
 
 const AppRoutes = () => (
@@ -48,9 +50,19 @@ const AppRoutes = () => (
           <UserNewPack />
         </ProtectedRoute>
       } />
-      <Route path="/classes" element={
+      <Route path="/agenda" element={
         <ProtectedRoute>
-          <Classes />
+          <Agenda />
+        </ProtectedRoute>
+      } />
+      <Route path="/class-detail/:id" element={
+        <ProtectedRoute>
+          <ClassDetail />
+        </ProtectedRoute>
+      } />
+      <Route path="/clases" element={
+        <ProtectedRoute>
+          <CargaMasivaClases />
         </ProtectedRoute>
       } />
     </Routes>
