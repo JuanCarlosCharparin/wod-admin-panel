@@ -11,6 +11,8 @@ import UserNewPack from '../pages/UserNewPack';
 import Agenda from '../pages/Agenda';
 import ClassDetail from '../pages/ClassDetail';
 import CargaMasivaClases from '../pages/CargaMasivaClases';
+import Disciplinas from '../pages/Disciplinas';
+import Planes from '../pages/Planes';
 
 
 const AppRoutes = () => (
@@ -63,6 +65,16 @@ const AppRoutes = () => (
       <Route path="/clases" element={
         <ProtectedRoute>
           <CargaMasivaClases />
+        </ProtectedRoute>
+      } />
+      <Route path="/disciplinas" element={
+        <ProtectedRoute>
+          <Disciplinas />
+        </ProtectedRoute>
+      } />
+      <Route path="/planes" element={
+        <ProtectedRoute>
+          <Planes />
         </ProtectedRoute>
       } />
     </Routes>
