@@ -18,6 +18,8 @@ const Navbar = () => {
   const navItems = [
     { path: '/dashboard', label: 'Home', icon: '🏠' },
     { path: '/users', label: 'Socios', icon: '👥' },
+    { path: '/disciplinas', label: 'Disciplinas', icon: '🏃‍♂️' },
+    { path: '/planes', label: 'Planes', icon: '📦' },
   ];
 
   // Función para obtener el nombre completo del usuario
