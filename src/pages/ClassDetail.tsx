@@ -184,20 +184,13 @@ const ClassDetail = () => {
                   ← Volver a Agenda
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="col-12">
-          <div className="row g-4">
-            {/* Información principal de la clase */}
-            <div className="col-md-8">
-              <div className="card shadow-sm h-100">
+              {/* Información principal de la clase (arriba) */}
+              <div className="card shadow-sm mt-4">
                 <div className="card-body">
                   <h4 className="card-title text-primary mb-4">
                     {clase.discipline.name}
                   </h4>
-                  
                   <div className="row align-items-center mb-3">
                     <div className="col-md-6">
                       <strong className="h5">{formatearFecha(clase.date) + ' ' + formatearHora(clase.time) + ' horas'}</strong>
@@ -226,58 +219,80 @@ const ClassDetail = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Lista de alumnos inscritos */}
-            <div className="col-md-4">
+        <div className="col-12">
+          <div className="row g-4">
+            {/* Alumnos inscriptos (grilla principal) */}
+            <div className="col-md-8">
               <div className="card shadow-sm h-100">
                 <div className="card-body">
-                  <h5 className="card-title text-primary mb-3">
-                    👥 Alumnos Inscriptos
-                  </h5>
-                  
+                  <h5 className="card-title text-primary mb-3">👥 Alumnos Inscriptos</h5>
                   {inscriptos.length === 0 ? (
                     <div className="text-center py-4">
                       <i className="fas fa-users fa-2x text-muted mb-3"></i>
                       <p className="text-muted mb-0">No hay alumnos inscritos</p>
                     </div>
                   ) : (
-                    <div className="d-flex flex-column gap-2">
+                    <div className="row g-3">
                       {inscriptos.map((inscripto) => (
-                        <div 
-                          key={inscripto.id} 
-                          className={`card border-0 ${
-                            inscripto.status === 'inscripto' 
-                              ? 'bg-success bg-opacity-10 border-success' 
-                              : 'bg-warning bg-opacity-10 border-warning'
-                          }`}
-                        >
-                          <div className="card-body py-2 px-3">
-                            <div className="d-flex align-items-center">
-                              <div className="flex-grow-1">
-                                <h6 className="mb-0 fw-semibold">
-                                  {inscripto.user.name} {inscripto.user.lastname}
-                                </h6>
-                                <small className={`badge ${
-                                  inscripto.status === 'inscripto' 
-                                    ? 'bg-success' 
-                                    : 'bg-warning'
-                                } text-white`}>
-                                  {inscripto.status === 'inscripto' ? 'Presente' : 'Ausente'}
-                                </small>
-                                
+                        <div key={inscripto.id} className="col-12 col-sm-6">
+                          <div
+                            className={`card h-100 border-0 ${
+                              inscripto.status === 'inscripto'
+                                ? 'bg-success bg-opacity-10 border-success'
+                                : 'bg-warning bg-opacity-10 border-warning'
+                            }`}
+                          >
+                            <div className="card-body p-3">
+                              <div className="d-flex align-items-start">
+                                <div className="flex-grow-1">
+                                  <div className="d-flex align-items-center justify-content-between">
+                                    <h6 className="mb-0 fw-semibold">
+                                      {inscripto.user.name} {inscripto.user.lastname}
+                                    </h6>
+                                    <span
+                                      className={`badge ${
+                                        inscripto.status === 'inscripto' ? 'bg-success' : 'bg-warning'
+                                      } text-white`}
+                                    >
+                                      {inscripto.status === 'inscripto' ? 'Presente' : 'Ausente'}
+                                    </span>
+                                  </div>
+                                  <small className="text-muted">
+                                    {inscripto.status === 'inscripto'
+                                      ? (inscripto.reserved ? formatearFechaReserva(inscripto.reserved, false) : '')
+                                      : (inscripto.canceled ? formatearFechaReserva(inscripto.canceled, true) : '')}
+                                  </small>
+                                </div>
                               </div>
-                              <small className="text-muted">
-                                {inscripto.status === 'inscripto' 
-                                  ? (inscripto.reserved ? formatearFechaReserva(inscripto.reserved, false) : '')
-                                  : (inscripto.canceled ? formatearFechaReserva(inscripto.canceled, true) : '')
-                                }
-                              </small>
                             </div>
                           </div>
                         </div>
                       ))}
                     </div>
                   )}
+                </div>
+              </div>
+            </div>
+
+            {/* Placeholder Anotar socio */}
+            <div className="col-md-4">
+              <div className="card shadow-sm h-100">
+                <div className="card-body">
+                  <h5 className="card-title text-primary mb-3">➕ Anotar socio</h5>
+                  <div className="mb-3">
+                    <label htmlFor="buscar_socio" className="form-label fw-semibold">Buscar socio</label>
+                    <input id="buscar_socio" type="text" className="form-control" placeholder="DNI, nombre o apellido" disabled />
+                    <div className="form-text">
+                      <small className="text-muted">Próximamente podrás buscar y anotar un socio manualmente.</small>
+                    </div>
+                  </div>
+                  <button className="btn btn-primary w-100" disabled>
+                    <i className="bi bi-person-plus me-2"></i>
+                    Anotar socio
+                  </button>
                 </div>
               </div>
             </div>

@@ -17,6 +17,7 @@ const UserNewPack = () => {
     gym_id: 0,
     user_id: 0,
     pack_id: '',
+    class_quantity: 0,
     discipline_ids: [] as number[]
   });
   const [loading, setLoading] = useState(false);
@@ -25,8 +26,33 @@ const UserNewPack = () => {
   const [packsLoading, setPacksLoading] = useState(true);
   const { user: authUser } = useAuth();
 
+  // Función para obtener la fecha y hora actual en formato datetime-local
+  const getCurrentDateTime = (): string => {
+    const now = new Date();
+    // Ajustar por la zona horaria local
+    const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+    return localDateTime.toISOString().slice(0, 16);
+  };
+
+  // Función para calcular la fecha de expiración (fecha actual + 30 días)
+  const getExpirationDateTime = (): string => {
+    const now = new Date();
+    // Agregar 30 días
+    const expirationDate = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000));
+    // Ajustar por la zona horaria local
+    const localDateTime = new Date(expirationDate.getTime() - expirationDate.getTimezoneOffset() * 60000);
+    return localDateTime.toISOString().slice(0, 16);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validar que se haya seleccionado un pack o ingresado cantidad de clases
+    if (!formData.pack_id && (!formData.class_quantity || formData.class_quantity <= 0)) {
+      alert('Debe seleccionar un paquete o ingresar una cantidad de clases válida');
+      return;
+    }
+    
     setLoading(true);
     
     try {
@@ -37,7 +63,8 @@ const UserNewPack = () => {
         status: formData.status,
         gym_id: formData.gym_id,
         user_id: formData.user_id,
-        pack_id: parseInt(formData.pack_id)
+        pack_id: formData.pack_id ? parseInt(formData.pack_id) : null,
+        class_quantity: formData.class_quantity || null
       };
       
       console.log('Datos del paquete a enviar:', packageData);
@@ -80,6 +107,26 @@ const UserNewPack = () => {
     }));
   };
 
+  // Función para manejar la selección de pack - desactiva class_quantity
+  const handlePackChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      pack_id: value,
+      class_quantity: 0 // Limpiar class_quantity cuando se selecciona un pack
+    }));
+  };
+
+  // Función para manejar la entrada de cantidad de clases - desactiva pack_id
+  const handleClassQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      class_quantity: parseInt(value) || 0,
+      pack_id: '' // Limpiar pack_id cuando se ingresa cantidad de clases
+    }));
+  };
+
   const handleDisciplineChange = (disciplineId: number, isChecked: boolean) => {
     setFormData(prev => ({
       ...prev,
@@ -90,6 +137,13 @@ const UserNewPack = () => {
   };
 
   useEffect(() => {
+    // Inicializar fechas automáticas
+    setFormData(prev => ({
+      ...prev,
+      start_date: getCurrentDateTime(),
+      expiration_date: getExpirationDateTime()
+    }));
+
     const fetchUser = async () => {
       try {
         const res = await axiosInstance.get(`http://localhost:8080/users/${id}`);
@@ -221,9 +275,8 @@ const UserNewPack = () => {
                       id="pack_id"
                       name="pack_id"
                       value={formData.pack_id}
-                      onChange={handleInputChange}
-                      required
-                      disabled={packsLoading}
+                      onChange={handlePackChange}
+                      disabled={packsLoading || formData.class_quantity > 0}
                     >
                       <option value="">Selecciona un paquete</option>
                       {packs.map((pack) => (
@@ -240,6 +293,47 @@ const UserNewPack = () => {
                         </small>
                       </div>
                     )}
+                    {formData.class_quantity > 0 && (
+                      <div className="form-text">
+                        <small className="text-warning">
+                          <i className="bi bi-exclamation-triangle me-1"></i>
+                          Deshabilitado porque se ingresó cantidad de clases
+                        </small>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Cantidad de clases */}
+                  <div className="col-md-6">
+                    <label htmlFor="class_quantity" className="form-label fw-bold">
+                      <i className="bi bi-123 me-2"></i>
+                      Cantidad de clases
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="class_quantity"
+                      name="class_quantity"
+                      value={formData.class_quantity || ''}
+                      onChange={handleClassQuantityChange}
+                      min="1"
+                      disabled={formData.pack_id !== ''}
+                      placeholder="Ingresa la cantidad de clases"
+                    />
+                    {formData.pack_id && (
+                      <div className="form-text">
+                        <small className="text-warning">
+                          <i className="bi bi-exclamation-triangle me-1"></i>
+                          Deshabilitado porque se seleccionó un paquete
+                        </small>
+                      </div>
+                    )}
+                    <div className="form-text">
+                      <small className="text-muted">
+                        <i className="bi bi-info-circle me-1"></i>
+                        Selecciona un paquete O ingresa cantidad de clases (no ambos)
+                      </small>
+                    </div>
                   </div>
 
                   {/* Disciplinas */}

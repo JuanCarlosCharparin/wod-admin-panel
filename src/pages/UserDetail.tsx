@@ -11,12 +11,12 @@ type UserPackHistory = {
   class_quantity: number;
   used: number;
   remaining: number;
-  pack: {
+  pack?: {
     id: number;
     pack_name: string;
     price: number;
     class_quantity: number;
-  };
+  } | null;
   disciplines: {
     id: number;
     name: string;
@@ -198,7 +198,16 @@ const UserDetail = () => {
             <tbody>
               {userPacksHistory.slice(0, 5).map((item) => (
                 <tr key={item.user_pack_id}>
-                  <td>{item.pack.pack_name}</td>
+                  <td>
+                    {item.pack?.pack_name ? (
+                      <span className="fw-bold">{item.pack.pack_name}</span>
+                    ) : (
+                      <span className="text-muted">
+                        <i className="bi bi-123 me-1"></i>
+                        {item.class_quantity} clases personalizadas
+                      </span>
+                    )}
+                  </td>
                   <td>{item.disciplines.map((discipline: { name: string }) => discipline.name).join(', ')}</td>
                   <td>{new Date(item.start_date).toLocaleDateString()}</td>
                   <td>{new Date(item.expiration_date).toLocaleDateString()}</td>
@@ -207,7 +216,14 @@ const UserDetail = () => {
                       {item.status === 1 ? 'Activo' : 'Vencido'}
                     </span>
                   </td>
-                  <td>{item.class_quantity}</td>
+                  <td>
+                    <span className="fw-bold">{item.class_quantity}</span>
+                    {item.pack && (
+                      <small className="text-muted d-block">
+                        (Pack: {item.pack.class_quantity})
+                      </small>
+                    )}
+                  </td>
                   <td>{item.used} de {item.class_quantity} disponibles</td>
                 </tr>
               ))}

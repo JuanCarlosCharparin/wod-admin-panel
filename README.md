@@ -79,3 +79,10 @@ Ahora mismo tienes:
 Si quieres, puedo armarte un ejemplo de estructura reordenada aplicando estos cambios para que puedas copiarla a tu proyecto sin romper nada.
 Así tendrías todo lo de clases listo para crecer con agenda, carga masiva y gestión.
 
+
+
+
+Lista de espera
+Agregar ventana de requests de personas nuevas en el gimnasio
+Login, registro y send request desde mobile al backend
+
